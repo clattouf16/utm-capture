@@ -38,7 +38,7 @@
 
         // Capture UTM parameters on page load
         window.addEventListener("load", function() {
-            captureUTM();
+            captureUTM(); // Capture UTM on page load
             setCookie("test_cookie", "working", 1); // Set test cookie for 1 day
             console.log("Test cookie set: test_cookie=working");
         });
