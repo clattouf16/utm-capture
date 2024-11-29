@@ -92,11 +92,7 @@
             }
         });
 
-        // Set a test cookie on page load for verification
-        window.addEventListener("load", function() {
-            setCookie("test_cookie", "working", 1); // Set test cookie for 1 day
-            console.log("Test cookie set: test_cookie=working");
-        });
+        // Do not set cookies or capture UTM parameters until the button is clicked
     </script>
 </body>
 </html>
