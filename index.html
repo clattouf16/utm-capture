@@ -43,10 +43,27 @@
             console.log("Test cookie set: test_cookie=working");
         });
 
-        // Capture UTM parameters when the button is clicked
+        // Function to get UTM parameters from cookies
+        function getCookie(name) {
+            let value = "; " + document.cookie;
+            let parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+            return "";
+        }
+
+        // Capture UTM parameters and pass them to Messenger when the button is clicked
         function captureOnClick() {
-            captureUTM(); // Capture UTM parameters when the button is clicked
-            window.open("http://m.me/428437983697310", "_blank"); // Open link in a new tab
+            const utmSource = getCookie("utm_source");
+            const utmMedium = getCookie("utm_medium");
+            const utmCampaign = getCookie("utm_campaign");
+            const utmTerm = getCookie("utm_term");
+            const utmContent = getCookie("utm_content");
+
+            // Construct the Messenger URL with UTM parameters
+            let messengerUrl = `https://m.me/428437983697310?utm_source=${utmSource}&utm_medium=${utmMedium}&utm_campaign=${utmCampaign}&utm_term=${utmTerm}&utm_content=${utmContent}`;
+            
+            // Open the Messenger URL in a new tab
+            window.open(messengerUrl, "_blank");
         }
 
     </script>
