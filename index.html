@@ -3,10 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test UTM Capture Page</title>
+    <title>Test Messenger Integration</title>
+</head>
+<body>
+    <h1>Test Messenger Integration</h1>
+
+    <!-- Include Facebook SDK -->
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v14.0&appId=924297842533211&autoLogAppEvents=1"></script>
+
+    <!-- Messenger Plugin -->
+    <div class="fb-customerchat" attribution="setup_tool" page_id="61569274589267"></div>
 
     <script>
-        // Helper function to set cookies
+        // Initialize Facebook SDK and force plugin rendering
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId: '924297842533211',  // Your Facebook App ID
+                cookie: true,
+                xfbml: true,  // Enable XFBML for the plugin to work
+                version: 'v14.0'
+            });
+            console.log("Facebook SDK initialized");
+
+            // Force the plugin to render
+            FB.XFBML.parse();
+        };
+    </script>
+
+    <!-- UTM Capture Script -->
+    <script>
         function setCookie(name, value, days) {
             var expires = "";
             if (days) {
@@ -17,97 +43,28 @@
             document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=None; Secure";
         }
 
-        // Helper function to get URL parameters
         function getQueryParam(param) {
             var params = new URLSearchParams(window.location.search);
             return params.get(param);
         }
 
-        // Capture UTM parameters and set them as cookies
         function captureUTM() {
             const utmParams = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
             utmParams.forEach(param => {
                 const value = getQueryParam(param);
                 if (value) {
-                    setCookie(param, value, 30); // Set cookies with a 30-day expiry
-                    console.log(`${param} captured: `, value); // Log captured UTM values
+                    setCookie(param, value, 30);  // Store UTM values in cookies for 30 days
+                    console.log(`${param} captured: `, value);
                 }
             });
             console.log("Cookies after capture: ", document.cookie);
         }
 
-        // Capture UTM parameters on page load
         window.addEventListener("load", function() {
-            captureUTM(); // Capture UTM on page load
-            setCookie("test_cookie", "working", 1); // Set test cookie for 1 day
+            captureUTM();
+            setCookie("test_cookie", "working", 1);  // Set a test cookie
             console.log("Test cookie set: test_cookie=working");
         });
-
-        // Function to get UTM parameters from cookies
-        function getCookie(name) {
-            let value = "; " + document.cookie;
-            let parts = value.split("; " + name + "=");
-            if (parts.length === 2) return parts.pop().split(";").shift();
-            return "";
-        }
-
-        // Capture UTM parameters and pass them to Messenger when the button is clicked
-        function captureOnClick() {
-            // Retrieve UTM parameters from cookies
-            const utmSource = getCookie("utm_source");
-            const utmMedium = getCookie("utm_medium");
-            const utmCampaign = getCookie("utm_campaign");
-            const utmTerm = getCookie("utm_term");
-            const utmContent = getCookie("utm_content");
-
-            // Debugging: Log the captured UTM values
-            console.log("Captured UTM values: ", {
-                utmSource, 
-                utmMedium, 
-                utmCampaign, 
-                utmTerm, 
-                utmContent
-            });
-
-            // URL encode the UTM parameters to ensure they are passed properly
-            const encodedUtmSource = encodeURIComponent(utmSource);
-            const encodedUtmMedium = encodeURIComponent(utmMedium);
-            const encodedUtmCampaign = encodeURIComponent(utmCampaign);
-            const encodedUtmTerm = encodeURIComponent(utmTerm);
-            const encodedUtmContent = encodeURIComponent(utmContent);
-
-            // Construct the Messenger URL with UTM parameters
-            let messengerUrl = `https://m.me/428437983697310?utm_source=${encodedUtmSource}&utm_medium=${encodedUtmMedium}&utm_campaign=${encodedUtmCampaign}&utm_term=${encodedUtmTerm}&utm_content=${encodedUtmContent}`;
-
-            // Log the final Messenger URL
-            console.log("Messenger URL: ", messengerUrl);
-
-            // Open the Messenger URL in a new tab
-            window.open(messengerUrl, "_blank");
-        }
-            
     </script>
-</head>
-<body>
-    <h1>Test UTM Capture Page</h1>
-    <p>Check the cookies in the browser's Developer Tools (Application > Cookies) and Console.</p>
-    <p>The test cookies should be visible along with any UTM parameters passed in the URL.</p>
-
-    <!-- Example Form with id and name attributes -->
-    <form>
-        <input type="text" id="username" name="username" placeholder="Enter your name">
-        <button type="submit">Submit</button>
-    </form>
-    
-    <!-- Contact Us Button -->
-    <button onclick="captureOnClick();">Contact Us</button>
-
-    <p>Test the page with URL query parameters like:</p>
-    <code>https://<your-domain>.com/?utm_source=google&utm_medium=cpc&utm_campaign=test_campaign</code>   
-
-   <div id="fb-root"></div>
- <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v14.0&appId=924297842533211&autoLogAppEvents=1" nonce="XxXxX"></script>
- <div class="fb-customerchat" attribution="setup_tool" page_id="61569274589267"></div>
-
 </body>
 </html>
