@@ -69,8 +69,15 @@
                 utmContent
             });
 
+            // URL encode the UTM parameters to ensure they are passed properly
+            const encodedUtmSource = encodeURIComponent(utmSource);
+            const encodedUtmMedium = encodeURIComponent(utmMedium);
+            const encodedUtmCampaign = encodeURIComponent(utmCampaign);
+            const encodedUtmTerm = encodeURIComponent(utmTerm);
+            const encodedUtmContent = encodeURIComponent(utmContent);
+
             // Construct the Messenger URL with UTM parameters
-            let messengerUrl = `https://m.me/428437983697310?utm_source=${utmSource}&utm_medium=${utmMedium}&utm_campaign=${utmCampaign}&utm_term=${utmTerm}&utm_content=${utmContent}`;
+            let messengerUrl = `https://m.me/428437983697310?utm_source=${encodedUtmSource}&utm_medium=${encodedUtmMedium}&utm_campaign=${encodedUtmCampaign}&utm_term=${encodedUtmTerm}&utm_content=${encodedUtmContent}`;
 
             // Log the final Messenger URL
             console.log("Messenger URL: ", messengerUrl);
