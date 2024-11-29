@@ -40,7 +40,7 @@
     </form>
 
     <!-- Contact Us Button -->
-    <button onclick="window.location.href='http://m.me/428437983697310';">Contact Us</button>
+    <button id="contactBtn">Contact Us</button>
 
     <p>Test the page with URL query parameters like:</p>
     <code>https://<your-github-username>.github.io/<your-repository-name>?utm_source=google&utm_medium=cpc&utm_campaign=test_campaign</code>
@@ -63,8 +63,8 @@
             return params.get(param);
         }
 
-        // Capture UTM parameters and set them as cookies
-        window.addEventListener("load", function() {
+        // Capture UTM parameters when Contact Us button is clicked
+        document.getElementById('contactBtn').addEventListener('click', function() {
             const utmParams = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
             utmParams.forEach(param => {
                 const value = getQueryParam(param);
@@ -75,7 +75,10 @@
             });
 
             // Log cookies to the console after capturing UTM parameters
-            console.log("Cookies after load: ", document.cookie);
+            console.log("Cookies after capture: ", document.cookie);
+
+            // Redirect to Contact Us page
+            window.location.href = "http://m.me/428437983697310"; // The link for Contact Us
         });
 
         // Set a test cookie on page load for verification
