@@ -78,13 +78,18 @@
             console.log("Cookies after load: ", document.cookie);
         }
 
-        // Function to handle the button click
+        // Function to handle the button click and open link in new tab
         document.getElementById("contactUsBtn").addEventListener("click", function() {
             // Capture UTM parameters before redirecting
             captureUTMParams();
 
-            // Open the Contact Us link in a new tab
-            window.open("http://m.me/428437983697310", "_blank");
+            // Ensure the link opens in a new tab by using window.open
+            var newWindow = window.open("http://m.me/428437983697310", "_blank");
+            if (newWindow) {
+                newWindow.focus();  // Make sure the new tab is in focus (may be blocked by browser settings)
+            } else {
+                console.log("The new tab was blocked.");
+            }
         });
 
         // Set a test cookie on page load for verification
