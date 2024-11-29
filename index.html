@@ -63,7 +63,7 @@
             return params.get(param);
         }
 
-        // Capture UTM parameters and set them as cookies
+        // Capture UTM parameters and set them as cookies (called only on button click)
         function captureUTMParams() {
             const utmParams = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
             utmParams.forEach(param => {
@@ -75,7 +75,7 @@
             });
 
             // Log cookies to the console after capturing UTM parameters
-            console.log("Cookies after load: ", document.cookie);
+            console.log("Cookies after capturing UTM: ", document.cookie);
         }
 
         // Function to handle the button click and open link in new tab
