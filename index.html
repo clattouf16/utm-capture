@@ -3,68 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Messenger Integration</title>
-</head>
-<body>
-    <h1>Test Messenger Integration</h1>
-
-    <!-- Include Facebook SDK -->
-    <div id="fb-root"></div>
-    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v14.0&appId=924297842533211&autoLogAppEvents=1"></script>
-
-    <!-- Messenger Plugin -->
-    <div class="fb-customerchat" attribution="setup_tool" page_id="61569274589267"></div>
+    <title>Test UTM Capture Page</title>
 
     <script>
-        // Initialize Facebook SDK and force plugin rendering
+        // Facebook SDK Initialization
         window.fbAsyncInit = function() {
             FB.init({
-                appId: '924297842533211',  // Your Facebook App ID
-                cookie: true,
-                xfbml: true,  // Enable XFBML for the plugin to work
-                version: 'v14.0'
+                appId      : '924297842533211',
+                xfbml      : true,
+                version    : 'v14.0'
             });
-            console.log("Facebook SDK initialized");
-
-            // Force the plugin to render
-            FB.XFBML.parse();
+            console.log("Facebook SDK initialized successfully.");
         };
+
+        // Include Facebook SDK script
+        (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) { return; }
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v14.0&appId=924297842533211&autoLogAppEvents=1";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
     </script>
+</head>
+<body>
 
-    <!-- UTM Capture Script -->
-    <script>
-        function setCookie(name, value, days) {
-            var expires = "";
-            if (days) {
-                var date = new Date();
-                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-                expires = "; expires=" + date.toUTCString();
-            }
-            document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=None; Secure";
-        }
+    <h1>Test UTM Capture Page</h1>
+    <p>Check the cookies in the browser's Developer Tools (Application > Cookies) and Console.</p>
+    <p>The test cookies should be visible along with any UTM parameters passed in the URL.</p>
 
-        function getQueryParam(param) {
-            var params = new URLSearchParams(window.location.search);
-            return params.get(param);
-        }
+    <button onclick="captureOnClick();">Contact Us</button>
 
-        function captureUTM() {
-            const utmParams = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
-            utmParams.forEach(param => {
-                const value = getQueryParam(param);
-                if (value) {
-                    setCookie(param, value, 30);  // Store UTM values in cookies for 30 days
-                    console.log(`${param} captured: `, value);
-                }
-            });
-            console.log("Cookies after capture: ", document.cookie);
-        }
+    <!-- Facebook Messenger Plugin -->
+    <div id="fb-root"></div>
+    <div class="fb-customerchat" attribution="setup_tool" page_id="61569274589267"></div>
 
-        window.addEventListener("load", function() {
-            captureUTM();
-            setCookie("test_cookie", "working", 1);  // Set a test cookie
-            console.log("Test cookie set: test_cookie=working");
-        });
-    </script>
 </body>
 </html>
