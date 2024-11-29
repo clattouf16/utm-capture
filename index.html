@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test UTM Capture Page</title>
+
+    <script>
+        // Helper function to set cookies
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=None; Secure";
+        }
+
+        // Helper function to get URL parameters
+        function getQueryParam(param) {
+            var params = new URLSearchParams(window.location.search);
+            return params.get(param);
+        }
+
+        // Capture UTM parameters and set them as cookies
+        window.addEventListener("load", function() {
+            const utmParams = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
+            utmParams.forEach(param => {
+                const value = getQueryParam(param);
+                if (value) {
+                    setCookie(param, value, 30); // Set cookies with a 30-day expiry
+                    console.log(`${param} captured: `, value); // Log captured UTM values
+                }
+            });
+
+            // Log cookies to the console after capturing UTM parameters
+            console.log("Cookies after load: ", document.cookie);
+        });
+
+        // Set a test cookie on page load for verification
+        window.addEventListener("load", function() {
+            setCookie("test_cookie", "working", 1); // Set test cookie for 1 day
+            console.log("Test cookie set: test_cookie=working");
+        });
+
+    </script>
+</head>
+<body>
+    <h1>Test UTM Capture Page</h1>
+    <p>Check the cookies in the browser's Developer Tools (Application > Cookies) and Console.</p>
+    <p>The test cookies should be visible along with any UTM parameters passed in the URL.</p>
+
+    <!-- Example Form with id and name attributes -->
+    <form>
+        <input type="text" id="username" name="username" placeholder="Enter your name">
+        <button type="submit">Submit</button>
+    </form>
+
+    <p>Test the page with URL query parameters like:</p>
+    <code>https://<your-github-username>.github.io/<your-repository-name>?utm_source=google&utm_medium=cpc&utm_campaign=test_campaign</code>
+</body>
+</html>
