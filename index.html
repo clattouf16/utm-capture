@@ -59,8 +59,20 @@
             const utmTerm = getCookie("utm_term");
             const utmContent = getCookie("utm_content");
 
+            // Debugging: Log the captured UTM values
+            console.log("Captured UTM values: ", {
+                utmSource, 
+                utmMedium, 
+                utmCampaign, 
+                utmTerm, 
+                utmContent
+            });
+
             // Construct the Messenger URL with UTM parameters
             let messengerUrl = `https://m.me/428437983697310?utm_source=${utmSource}&utm_medium=${utmMedium}&utm_campaign=${utmCampaign}&utm_term=${utmTerm}&utm_content=${utmContent}`;
+
+            // Log the final Messenger URL
+            console.log("Messenger URL: ", messengerUrl);
             
             // Open the Messenger URL in a new tab
             window.open(messengerUrl, "_blank");
