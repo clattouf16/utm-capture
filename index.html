@@ -5,46 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test UTM Capture Page</title>
 
-    <!-- Google Tag Manager -->
-    <script>
-        (function(w,d,s,l,i){
-            w[l]=w[l]||[];
-            w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});
-            var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
-            j.async=true;
-            j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
-            f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-PJPDRFKR');
-    </script>
-   <!-- End Google Tag Manager -->
-
-</head>
-<body>
-    <!-- Google Tag Manager (noscript)-->
-    <noscript>
-        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PJPDRFKR"
-        height="0" width="0" style="display:none;visibility:hidden"></iframe>
-    </noscript>
- <!-- End Google Tag Manager (noscript) -->
-
-    <h1>Test UTM Capture Page</h1>
-    <p>Check the cookies in the browser's Developer Tools (Application > Cookies) and Console.</p>
-    <p>The test cookies should be visible along with any UTM parameters passed in the URL.</p>
-
-    <!-- Example Form with id and name attributes -->
-    <form>
-        <input type="text" id="username" name="username" placeholder="Enter your name">
-        <button type="submit">Submit</button>
-    </form>
-
-    <!-- Contact Us Button -->
-    <button id="contactUsBtn">Contact Us</button>
-
-    <p>Test the page with URL query parameters like:</p>
-    <code>https://<your-github-username>.github.io/<your-repository-name>?utm_source=google&utm_medium=cpc&utm_campaign=test_campaign</code>
-
     <script>
         // Helper function to set cookies
         function setCookie(name, value, days) {
@@ -63,8 +23,8 @@
             return params.get(param);
         }
 
-        // Capture UTM parameters and set them as cookies (called only on button click)
-        function captureUTMParams() {
+        // Capture UTM parameters and set them as cookies
+        function captureUTM() {
             const utmParams = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
             utmParams.forEach(param => {
                 const value = getQueryParam(param);
@@ -73,26 +33,39 @@
                     console.log(`${param} captured: `, value); // Log captured UTM values
                 }
             });
-
-            // Log cookies to the console after capturing UTM parameters
-            console.log("Cookies after capturing UTM: ", document.cookie);
+            console.log("Cookies after capture: ", document.cookie);
         }
 
-        // Function to handle the button click and open link in new tab
-        document.getElementById("contactUsBtn").addEventListener("click", function() {
-            // Capture UTM parameters before redirecting
-            captureUTMParams();
-
-            // Ensure the link opens in a new tab by using window.open
-            var newWindow = window.open("http://m.me/428437983697310", "_blank");
-            if (newWindow) {
-                newWindow.focus();  // Make sure the new tab is in focus (may be blocked by browser settings)
-            } else {
-                console.log("The new tab was blocked.");
-            }
+        // Capture UTM parameters on page load
+        window.addEventListener("load", function() {
+            captureUTM();
+            setCookie("test_cookie", "working", 1); // Set test cookie for 1 day
+            console.log("Test cookie set: test_cookie=working");
         });
 
-        // Do not set cookies or capture UTM parameters until the button is clicked
+        // Capture UTM parameters when the button is clicked
+        function captureOnClick() {
+            captureUTM(); // Capture UTM parameters when the button is clicked
+            window.open("http://m.me/428437983697310", "_blank"); // Open link in a new tab
+        }
+
     </script>
+</head>
+<body>
+    <h1>Test UTM Capture Page</h1>
+    <p>Check the cookies in the browser's Developer Tools (Application > Cookies) and Console.</p>
+    <p>The test cookies should be visible along with any UTM parameters passed in the URL.</p>
+
+    <!-- Example Form with id and name attributes -->
+    <form>
+        <input type="text" id="username" name="username" placeholder="Enter your name">
+        <button type="submit">Submit</button>
+    </form>
+    
+    <!-- Contact Us Button -->
+    <button onclick="captureOnClick();">Contact Us</button>
+
+    <p>Test the page with URL query parameters like:</p>
+    <code>https://<your-github-username>.github.io/<your-repository-name>?utm_source=google&utm_medium=cpc&utm_campaign=test_campaign</code>
 </body>
 </html>
