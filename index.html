@@ -53,6 +53,7 @@
 
         // Capture UTM parameters and pass them to Messenger when the button is clicked
         function captureOnClick() {
+            // Retrieve UTM parameters from cookies
             const utmSource = getCookie("utm_source");
             const utmMedium = getCookie("utm_medium");
             const utmCampaign = getCookie("utm_campaign");
@@ -73,7 +74,7 @@
 
             // Log the final Messenger URL
             console.log("Messenger URL: ", messengerUrl);
-            
+
             // Open the Messenger URL in a new tab
             window.open(messengerUrl, "_blank");
         }
@@ -95,6 +96,6 @@
     <button onclick="captureOnClick();">Contact Us</button>
 
     <p>Test the page with URL query parameters like:</p>
-    <code>https://<your-github-username>.github.io/<your-repository-name>?utm_source=google&utm_medium=cpc&utm_campaign=test_campaign</code>
+    <code>https://<your-domain>.com/?utm_source=google&utm_medium=cpc&utm_campaign=test_campaign</code>
 </body>
 </html>
