@@ -110,11 +110,11 @@
     // If you're sending authentication tokens or other headers, make sure to include them
   },
   body: JSON.stringify({
-    utm_source: 'source',
-    utm_medium: 'medium',
-    utm_campaign: 'campaign',
-    utm_term: 'term',
-    utm_content: 'content',
+    utm_source: utmSource,
+    utm_medium: utmMedium,
+    utm_campaign: utmCampaign,
+    utm_term: utmTerm,
+    utm_content: utmContent,
   })
 })
 .then(response => response.json())
