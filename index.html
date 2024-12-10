@@ -101,7 +101,7 @@
     const encodedUtmContent = encodeURIComponent(utmContent);
 
     // Send UTM parameters to Google Apps Script (via a POST request)
-    fetch('https://script.google.com/macros/s/AKfycbyrUhGlmfnpL_MJKexpJQWU1-sHogcHUdkwx_iPeBxzLiFbwyUKmiSQPK5tVAeIIjQG/exec', {
+    fetch('https://script.google.com/macros/s/AKfycby55zmIRdWeheKj8m5xlHXaHqtJsfgHGaZlG42Z3y4HUoDLFdj0Ww3Y5yYAeCius48u/exec', {
        method: 'POST',
        mode: 'no-cors', 
   headers: {
@@ -121,7 +121,7 @@
 .then(data => console.log(data))
 .catch(error => console.error('Error:', error));
     // Construct the Messenger URL with UTM parameters and open Messenger
-    let messengerUrl = `https://m.me/61569274589267?ref=utm_source=${encodedUtmSource}&utm_medium=${encodedUtmMedium}&utm_campaign=${encodedUtmCampaign}&utm_term=${encodedUtmTerm}&utm_content=${encodedUtmContent}`;
+    let messengerUrl = `https://m.me/61569274589267?utm_source=${encodedUtmSource}&utm_medium=${encodedUtmMedium}&utm_campaign=${encodedUtmCampaign}&utm_term=${encodedUtmTerm}&utm_content=${encodedUtmContent}`;
     console.log("Messenger URL: ", messengerUrl);
     window.open(messengerUrl);
 }
