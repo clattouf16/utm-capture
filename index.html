@@ -7,7 +7,7 @@
 
     <!-- Open Graph Tags -->
     <meta property="og:title" content="Test UTM Capture Page" />
-    <meta property="og:description" content="This is a test page for capturing UTM parameters and integrating with Facebook Messenger Chat plugin." />
+    <meta property="og:description" content="This is a test page for capturing UTM parameters and integrating the Facebook Messenger Chat plugin." />
     <meta property="og:image" content="https://example.com/path-to-your-image.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -32,26 +32,18 @@
     <script>
         // Helper function to set cookies
         function setCookie(name, value, days) {
-            let expires = "";
+            var expires = "";
             if (days) {
-                let date = new Date();
+                var date = new Date();
                 date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
                 expires = "; expires=" + date.toUTCString();
             }
             document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=None; Secure";
         }
 
-        // Helper function to retrieve cookies
-        function getCookie(name) {
-            let value = "; " + document.cookie;
-            let parts = value.split("; " + name + "=");
-            if (parts.length === 2) return parts.pop().split(";").shift();
-            return "";
-        }
-
         // Helper function to get URL parameters
         function getQueryParam(param) {
-            let params = new URLSearchParams(window.location.search);
+            var params = new URLSearchParams(window.location.search);
             return params.get(param);
         }
 
@@ -71,61 +63,68 @@
         // Capture UTM parameters on page load
         window.addEventListener("load", function() {
             captureUTM(); // Capture UTM on page load
+            setCookie("test_cookie", "working", 1); // Set test cookie for 1 day
+            console.log("Test cookie set: test_cookie=working");
         });
 
-        // Function to log button click with UTM parameters
-        function logButtonClick() {
-            const utmData = {
-                utm_source: getCookie("utm_source"),
-                utm_medium: getCookie("utm_medium"),
-                utm_campaign: getCookie("utm_campaign"),
-                utm_term: getCookie("utm_term"),
-                utm_content: getCookie("utm_content"),
-                action: "button_click"
-            };
-
-            console.log("Logging button click: ", utmData);
-
-            fetch('https://script.google.com/macros/s/AKfycbyv2tr1H63ALhqiyH3rpjh6uKr_VmM5c0bUi71lrArExKsL60Z1V1eLP4M2yRWayVC1/exec', {
-                method: 'POST',
-                mode: 'no-cors', // Bypasses CORS policy
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(utmData)
-            })
-             .then(response => {
-            console.log("Button click logged successfully.", response);
-            // After logging, redirect to Messenger
-            window.location.href = "https://m.me/428437983697310";
-        })
-            .catch(error => console.error("Error logging button click:", error));
+        // Function to get UTM parameters from cookies
+        function getCookie(name) {
+            let value = "; " + document.cookie;
+            let parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+            return "";
         }
 
-        // Function to log first message sent in Messenger
-        function logFirstMessage() {
-            const utmData = {
-                utm_source: getCookie("utm_source"),
-                utm_medium: getCookie("utm_medium"),
-                utm_campaign: getCookie("utm_campaign"),
-                utm_term: getCookie("utm_term"),
-                utm_content: getCookie("utm_content"),
-                action: "first_message"
-            };
+        // Capture UTM parameters and pass them to Messenger when the button is clicked
+        function captureOnClick() {
+    // Retrieve UTM parameters from cookies
+    const utmSource = getCookie("utm_source");
+    const utmMedium = getCookie("utm_medium");
+    const utmCampaign = getCookie("utm_campaign");
+    const utmTerm = getCookie("utm_term");
+    const utmContent = getCookie("utm_content");
 
-            console.log("Logging first message: ", utmData);
+    // Debugging: Log the captured UTM values
+    console.log("Captured UTM values: ", {
+        utmSource, 
+        utmMedium, 
+        utmCampaign, 
+        utmTerm, 
+        utmContent
+    });
 
-            fetch('https://script.google.com/macros/s/AKfycbyv2tr1H63ALhqiyH3rpjh6uKr_VmM5c0bUi71lrArExKsL60Z1V1eLP4M2yRWayVC1/exec', {
-                method: 'POST',
-                mode: 'no-cors', // Bypasses CORS policy
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(utmData)
-            })
-            .then(response => console.log("First message logged successfully.", response))
-            .catch(error => console.error("Error logging first message:", error));
-        }
+    // URL encode the UTM parameters
+    const encodedUtmSource = encodeURIComponent(utmSource);
+    const encodedUtmMedium = encodeURIComponent(utmMedium);
+    const encodedUtmCampaign = encodeURIComponent(utmCampaign);
+    const encodedUtmTerm = encodeURIComponent(utmTerm);
+    const encodedUtmContent = encodeURIComponent(utmContent);
+
+    // Send UTM parameters to Google Apps Script (via a POST request)
+    fetch('https://script.google.com/macros/s/AKfycbxqKKygpmgDH5igAkUfvQP4vKa9EIUNdSEgBKnVVBQWQllCIwTjTqQ34CBk7A1f7JE/exec', {
+       method: 'POST',
+       mode: 'no-cors', 
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    // If you're sending authentication tokens or other headers, make sure to include them
+  },
+  body: JSON.stringify({
+    utm_source: utmSource,
+    utm_medium: utmMedium,
+    utm_campaign: utmCampaign,
+    utm_term: utmTerm,
+    utm_content: utmContent,
+  })
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error('Error:', error));
+    // Construct the Messenger URL with UTM parameters and open Messenger
+    let messengerUrl = `https://m.me/61569274589267?utm_source=${encodedUtmSource}&utm_medium=${encodedUtmMedium}&utm_campaign=${encodedUtmCampaign}&utm_term=${encodedUtmTerm}&utm_content=${encodedUtmContent}`;
+    console.log("Messenger URL: ", messengerUrl);
+    window.open(messengerUrl);
+}
 
     </script>
 </head>
@@ -134,14 +133,20 @@
     <p>Check the cookies in the browser's Developer Tools (Application > Cookies) and Console.</p>
     <p>The test cookies should be visible along with any UTM parameters passed in the URL.</p>
 
+    <!-- Example Form with id and name attributes -->
+    <form>
+        <input type="text" id="username" name="username" placeholder="Enter your name">
+        <button type="submit">Submit</button>
+    </form>
+    
     <!-- Contact Us Button -->
-    <button id="log-button" onclick="logButtonClick();">Contact Us</button>
+    <button onclick="captureOnClick();">Contact Us</button>
 
     <p>Test the page with URL query parameters like:</p>
     <code>https://<your-domain>.com/?utm_source=google&utm_medium=cpc&utm_campaign=test_campaign</code>   
 
     <!-- Messenger Customer Chat Plugin -->
     <div id="fb-root"></div>
-    <div class="fb-customerchat" attribution="setup_tool" page_id="61569274589267" logged_in_greeting="Hi there! Send us a message." logged_out_greeting="Hi there! Send us a message."></div>
+    <div class="fb-customerchat" attribution="setup_tool" page_id="61569274589267"></div>
 </body>
 </html>
