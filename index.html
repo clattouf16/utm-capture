@@ -93,7 +93,11 @@
                 },
                 body: JSON.stringify(utmData)
             })
-            .then(response => console.log("Button click logged successfully.", response))
+             .then(response => {
+            console.log("Button click logged successfully.", response);
+            // After logging, redirect to Messenger
+            window.location.href = "https://m.me/428437983697310";
+        })
             .catch(error => console.error("Error logging button click:", error));
         }
 
