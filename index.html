@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test UTM Capture Page</title>
 
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Test UTM Capture Page" />
+    <meta property="og:description" content="This is a test page for capturing UTM parameters and integrating with Facebook Messenger Chat plugin." />
+    <meta property="og:image" content="https://example.com/path-to-your-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content="https://example.com/utm-capture" />
+
     <!-- Facebook SDK -->
     <script>
         window.fbAsyncInit = function() {
@@ -14,18 +22,58 @@
                 xfbml: true,
                 version: 'v14.0'
             });
+            console.log("Facebook SDK initialized");
         };
     </script>
-    <script async defer crossorigin="anonymous"
+    <script async defer crossorigin="anonymous" 
         src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v14.0&appId=924297842533211&autoLogAppEvents=1">
     </script>
 
     <script>
-        function openMessenger() {
-            FB.CustomerChat.showDialog(); // Open the Messenger Chat Plugin
-            logButtonClick(); // Log UTM data when the button is clicked
+        // Helper function to set cookies
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                let date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=None; Secure";
         }
 
+        // Helper function to retrieve cookies
+        function getCookie(name) {
+            let value = "; " + document.cookie;
+            let parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+            return "";
+        }
+
+        // Helper function to get URL parameters
+        function getQueryParam(param) {
+            let params = new URLSearchParams(window.location.search);
+            return params.get(param);
+        }
+
+        // Capture UTM parameters and set them as cookies
+        function captureUTM() {
+            const utmParams = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
+            utmParams.forEach(param => {
+                const value = getQueryParam(param);
+                if (value) {
+                    setCookie(param, value, 30); // Set cookies with a 30-day expiry
+                    console.log(`${param} captured: `, value); // Log captured UTM values
+                }
+            });
+            console.log("Cookies after capture: ", document.cookie);
+        }
+
+        // Capture UTM parameters on page load
+        window.addEventListener("load", function() {
+            captureUTM(); // Capture UTM on page load
+        });
+
+        // Function to log button click with UTM parameters
         function logButtonClick() {
             const utmData = {
                 utm_source: getCookie("utm_source"),
@@ -36,32 +84,58 @@
                 action: "button_click"
             };
 
+            console.log("Logging button click: ", utmData);
+
             fetch('https://script.google.com/macros/s/AKfycbwzyv1PArxyW3ALb7aC7wOAGqQqJDiyfD3beog4PqoIsoLpkjS9zImeP0FRfCKu-x4/exec', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify(utmData)
             })
-            .then(response => response.json())
-            .then(data => console.log("Data logged successfully:", data))
-            .catch(error => console.error("Error logging data:", error));
+            .then(response => console.log("Button click logged successfully.", response))
+            .catch(error => console.error("Error logging button click:", error));
         }
 
-        function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(";").shift();
+        // Function to log first message sent in Messenger
+        function logFirstMessage() {
+            const utmData = {
+                utm_source: getCookie("utm_source"),
+                utm_medium: getCookie("utm_medium"),
+                utm_campaign: getCookie("utm_campaign"),
+                utm_term: getCookie("utm_term"),
+                utm_content: getCookie("utm_content"),
+                action: "first_message"
+            };
+
+            console.log("Logging first message: ", utmData);
+
+            fetch('https://script.google.com/macros/s/AKfycbwzyv1PArxyW3ALb7aC7wOAGqQqJDiyfD3beog4PqoIsoLpkjS9zImeP0FRfCKu-x4/exec', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(utmData)
+            })
+            .then(response => console.log("First message logged successfully.", response))
+            .catch(error => console.error("Error logging first message:", error));
         }
+
     </script>
 </head>
 <body>
     <h1>Test UTM Capture Page</h1>
-    <p>Test the button to open Messenger and log UTM parameters.</p>
+    <p>Check the cookies in the browser's Developer Tools (Application > Cookies) and Console.</p>
+    <p>The test cookies should be visible along with any UTM parameters passed in the URL.</p>
 
-    <!-- Button -->
-    <button id="log-button" onclick="openMessenger();">Contact Us</button>
+    <!-- Contact Us Button -->
+    <button id="log-button" onclick="logButtonClick();">Contact Us</button>
+
+    <p>Test the page with URL query parameters like:</p>
+    <code>https://<your-domain>.com/?utm_source=google&utm_medium=cpc&utm_campaign=test_campaign</code>   
 
     <!-- Messenger Customer Chat Plugin -->
     <div id="fb-root"></div>
-    <div class="fb-customerchat" attribution="setup_tool" page_id="61569274589267"></div>
+    <div class="fb-customerchat" attribution="setup_tool" page_id="61569274589267" logged_in_greeting="Hi there! Send us a message." logged_out_greeting="Hi there! Send us a message."></div>
 </body>
 </html>
