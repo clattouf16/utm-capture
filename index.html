@@ -7,7 +7,7 @@
 
     <!-- Open Graph Tags -->
     <meta property="og:title" content="Test UTM Capture Page" />
-    <meta property="og:description" content="Capturing UTM parameters and integrating the Facebook Messenger Chat plugin." />
+    <meta property="og:description" content="This is a test page for capturing UTM parameters and integrating the Facebook Messenger Chat plugin." />
     <meta property="og:image" content="https://example.com/path-to-your-image.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -54,7 +54,7 @@
                 const value = getQueryParam(param);
                 if (value) {
                     setCookie(param, value, 30); // Set cookies with a 30-day expiry
-                    console.log(`${param} captured: `, value);
+                    console.log(${param} captured: , value);
                 }
             });
             console.log("Cookies after capture: ", document.cookie);
@@ -63,6 +63,7 @@
         // Capture UTM parameters on page load
         window.addEventListener("load", function() {
             captureUTM();
+            setCookie("test_cookie", "working", 1); // Set test cookie for 1 day
         });
 
         // Function to get cookie value
@@ -97,7 +98,7 @@
             const utmTerm = getCookie("utm_term");
             const utmContent = getCookie("utm_content");
 
-            fetch('https://script.google.com/macros/s/AKfycbxSyuqK5bgwCExVTSUWZVwcTmG51yQkAUy5T4IoHwmeJ9NpaPlk8TGJuzKII5iGgV70/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwYxKK61ClfGfVDHusGJYLHfixlFXwotvEmLn1NG3oSJ2POJ217e46s9L6RQ6bD1udd/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
@@ -109,11 +110,11 @@
                     utm_term: utmTerm,
                     utm_content: utmContent,
                 })
-            }).then(() => console.log("Data sent to Google Script"))
+            }).then(response => console.log("Data sent to Google Script"))
               .catch(error => console.error("Error:", error));
 
             // Open Messenger after sending data
-            let messengerUrl = `https://m.me/61569274589267?utm_source=${encodeURIComponent(utmSource)}&utm_medium=${encodeURIComponent(utmMedium)}&utm_campaign=${encodeURIComponent(utmCampaign)}&utm_term=${encodeURIComponent(utmTerm)}&utm_content=${encodeURIComponent(utmContent)}`;
+            let messengerUrl = https://m.me/61569274589267?utm_source=${encodeURIComponent(utmSource)}&utm_medium=${encodeURIComponent(utmMedium)}&utm_campaign=${encodeURIComponent(utmCampaign)}&utm_term=${encodeURIComponent(utmTerm)}&utm_content=${encodeURIComponent(utmContent)};
             console.log("Messenger URL: ", messengerUrl);
             window.open(messengerUrl);
         }
@@ -122,9 +123,13 @@
 <body>
     <h1>Test UTM Capture Page</h1>
     <p>Check the cookies in the browser's Developer Tools (Application > Cookies) and Console.</p>
+    <p>The test cookies should be visible along with any UTM parameters passed in the URL.</p>
 
     <!-- Contact Us Button -->
     <button onclick="captureOnClick();">Contact Us</button>
+
+    <p>Test the page with URL query parameters like:</p>
+    <code>https://<your-domain>.com/?utm_source=google&utm_medium=cpc&utm_campaign=test_campaign</code>   
 
     <!-- Messenger Customer Chat Plugin -->
     <div id="fb-root"></div>
