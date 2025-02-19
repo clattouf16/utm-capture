@@ -75,41 +75,55 @@
             return "";
         }
 
-   function captureOnClick() {
-    FB.login(function(response) {
-        if (response.authResponse) {
-            let userId = response.authResponse.userID;
-            console.log("User logged in, Messenger ID:", userId);
-            
-            // Retrieve UTM parameters from cookies
-            const utmParams = {
-                utm_source: getCookie("utm_source") || "",
-                utm_medium: getCookie("utm_medium") || "",
-                utm_campaign: getCookie("utm_campaign") || "",
-                utm_term: getCookie("utm_term") || "",
-                utm_content: getCookie("utm_content") || ""
-            };
+        // Capture UTM parameters and pass them to Messenger when the button is clicked
+        function captureOnClick() {
+    // Retrieve UTM parameters from cookies
+    const utmSource = getCookie("utm_source");
+    const utmMedium = getCookie("utm_medium");
+    const utmCampaign = getCookie("utm_campaign");
+    const utmTerm = getCookie("utm_term");
+    const utmContent = getCookie("utm_content");
 
-            console.log("Captured UTM parameters:", utmParams);
+    // Debugging: Log the captured UTM values
+    console.log("Captured UTM values: ", {
+        utmSource, 
+        utmMedium, 
+        utmCampaign, 
+        utmTerm, 
+        utmContent
+    });
 
-            // Send data to Google Apps Script
-            fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...utmParams, user_id: userId })
-            })
-            .then(() => console.log("Data sent successfully"))
-            .catch(error => console.error("Error sending data:", error));
+    // URL encode the UTM parameters
+    const encodedUtmSource = encodeURIComponent(utmSource);
+    const encodedUtmMedium = encodeURIComponent(utmMedium);
+    const encodedUtmCampaign = encodeURIComponent(utmCampaign);
+    const encodedUtmTerm = encodeURIComponent(utmTerm);
+    const encodedUtmContent = encodeURIComponent(utmContent);
 
-            // Construct Messenger URL with UTM parameters
-            let messengerUrl = `https://m.me/61569274589267?${new URLSearchParams(utmParams).toString()}`;
-            console.log("Opening Messenger:", messengerUrl);
-            window.open(messengerUrl, "_blank");
-        } else {
-            console.log("User cancelled login or did not authorize.");
-        }
-    }, { scope: 'public_profile' }); // Request minimum required permission
+    // Send UTM parameters to Google Apps Script (via a POST request)
+    fetch('https://script.google.com/macros/s/AKfycbz5oFruhWjWYUiO4oSr-z9kiuOAmbXJ_wVGx2CDF0Lm8yY0DuhhnTxLRkkz7FfGQvZx/exec', {
+       method: 'POST',
+       mode: 'no-cors', 
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    // If you're sending authentication tokens or other headers, make sure to include them
+  },
+  body: JSON.stringify({
+    utm_source: utmSource,
+    utm_medium: utmMedium,
+    utm_campaign: utmCampaign,
+    utm_term: utmTerm,
+    utm_content: utmContent,
+  })
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error('Error:', error));
+    // Construct the Messenger URL with UTM parameters and open Messenger
+    let messengerUrl = `https://m.me/61569274589267?utm_source=${encodedUtmSource}&utm_medium=${encodedUtmMedium}&utm_campaign=${encodedUtmCampaign}&utm_term=${encodedUtmTerm}&utm_content=${encodedUtmContent}`;
+    console.log("Messenger URL: ", messengerUrl);
+    window.open(messengerUrl);
 }
 
     </script>
