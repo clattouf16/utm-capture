@@ -54,7 +54,7 @@
                 const value = getQueryParam(param);
                 if (value) {
                     setCookie(param, value, 30); // Set cookies with a 30-day expiry
-                    console.log(${param} captured: , value);
+                    console.log(`${param} captured: `, value);
                 }
             });
             console.log("Cookies after capture: ", document.cookie);
@@ -114,7 +114,7 @@
               .catch(error => console.error("Error:", error));
 
             // Open Messenger after sending data
-            let messengerUrl = https://m.me/61569274589267?utm_source=${encodeURIComponent(utmSource)}&utm_medium=${encodeURIComponent(utmMedium)}&utm_campaign=${encodeURIComponent(utmCampaign)}&utm_term=${encodeURIComponent(utmTerm)}&utm_content=${encodeURIComponent(utmContent)};
+            let messengerUrl = `https://m.me/61569274589267?utm_source=${encodeURIComponent(utmSource)}&utm_medium=${encodeURIComponent(utmMedium)}&utm_campaign=${encodeURIComponent(utmCampaign)}&utm_term=${encodeURIComponent(utmTerm)}&utm_content=${encodeURIComponent(utmContent)}`;
             console.log("Messenger URL: ", messengerUrl);
             window.open(messengerUrl);
         }
