@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Messenger Ref Page</title>
+
+    <!--
+      Messenger ref test
+      ------------------
+      Messenger ignores UTM parameters on m.me links. The only value it passes
+      through to the inbox (Echo) is "ref". This page reads the UTMs from its
+      own URL, packs them into a ref, and puts that ref on the Messenger button.
+
+      Ref rules (Meta): only letters, numbers, "-", "_" and "=" are allowed.
+      Format used here:  src=facebook__cmp=spring-sale__lp=lp1
+        - "=" separates a key from its value
+        - "__" (double underscore) separates fields
+        - inside values, anything not allowed (incl. "_") becomes "-"
+
+      To test: open this page ON YOUR PHONE with UTMs, e.g.
+        ref-test.html?utm_source=facebook&utm_campaign=spring_sale&utm_medium=cpc
+      then tap the button and send a message. Look for the ref in Echo.
+    -->
+
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 20px; color: #1c1e21; line-height: 1.5; }
+        .btn { display: inline-block; background: #0084ff; color: #fff; text-decoration: none; padding: 14px 24px; border-radius: 8px; font-weight: 600; font-size: 17px; }
+        .btn:active { background: #006fd6; }
+        .debug { margin-top: 32px; padding: 16px; background: #f0f2f5; border-radius: 8px; font-size: 14px; }
+        .debug code { word-break: break-all; background: #fff; padding: 2px 6px; border-radius: 4px; }
+        .debug table { border-collapse: collapse; width: 100%; }
+        .debug td { padding: 4px 8px 4px 0; vertical-align: top; }
+        .debug td:first-child { color: #65676b; white-space: nowrap; }
+    </style>
+</head>
+<body>
+    <h1>Test Messenger Ref Page</h1>
+    <p>Tap the button to open Messenger. The campaign info travels with you as a <code>ref</code>.</p>
+
+    <!-- Plain link: no Facebook SDK, no cookies, no popup blocking -->
+    <a id="messenger-btn" class="btn" href="https://m.me/100044503836521">Contact Us on Messenger</a>
+
+    <!-- Debug panel: remove (or hide) before using on a real landing page -->
+    <div class="debug" id="debug">
+        <strong>Test info</strong>
+        <table>
+            <tr><td>utm_source</td><td id="d-src">–</td></tr>
+            <tr><td>utm_medium</td><td id="d-med">–</td></tr>
+            <tr><td>utm_campaign</td><td id="d-cmp">–</td></tr>
+            <tr><td>utm_content</td><td id="d-cnt">–</td></tr>
+            <tr><td>utm_term</td><td id="d-trm">–</td></tr>
+            <tr><td>ref sent</td><td><code id="d-ref">–</code></td></tr>
+            <tr><td>button link</td><td><code id="d-link">–</code></td></tr>
+        </table>
+    </div>
+
+    <script>
+        // ===== Settings: change per landing page =====
+        const PAGE_ID      = "100044503836521"; // your Facebook page
+        const LANDING_PAGE = "lp1";            // unique name for THIS landing page
+        // ==============================================
+
+        const params = new URLSearchParams(window.location.search);
+
+        // Make a value safe for a Messenger ref: only A-Z a-z 0-9 and "-"
+        // ("_" and "=" are reserved as separators below)
+        function clean(value, maxLen) {
+            return (value || "")
+                .trim()
+                .replace(/[^A-Za-z0-9-]+/g, "-")  // spaces, _, %, etc. -> "-"
+                .replace(/-+/g, "-")              // collapse repeats
+                .replace(/^-|-$/g, "")            // trim dashes
+                .slice(0, maxLen || 40);
+        }
+
+        // Which UTMs go into the ref, and their short keys (keeps the ref short)
+        const fields = [
+            ["src", "utm_source"],
+            ["med", "utm_medium"],
+            ["cmp", "utm_campaign"],
+            ["cnt", "utm_content"],
+            ["trm", "utm_term"],
+        ];
+
+        const parts = [];
+        fields.forEach(([key, utm]) => {
+            const v = clean(params.get(utm));
+            if (v) parts.push(key + "=" + v);
+        });
+        parts.push("lp=" + clean(LANDING_PAGE)); // always tag the landing page
+
+        // Keep well under Meta's length limit
+        const ref = parts.join("__").slice(0, 200);
+        const messengerUrl = "https://m.me/" + PAGE_ID + "?ref=" + encodeURIComponent(ref);
+
+        document.getElementById("messenger-btn").href = messengerUrl;
+
+        // ----- Debug output -----
+        const show = (id, v) => { document.getElementById(id).textContent = v || "–"; };
+        show("d-src", params.get("utm_source"));
+        show("d-med", params.get("utm_medium"));
+        show("d-cmp", params.get("utm_campaign"));
+        show("d-cnt", params.get("utm_content"));
+        show("d-trm", params.get("utm_term"));
+        show("d-ref", ref);
+        show("d-link", messengerUrl);
+        console.log("Messenger ref:", ref);
+        console.log("Messenger URL:", messengerUrl);
+    </script>
+</body>
+</html>
